@@ -1,0 +1,7 @@
+version: "3"
+
+services:
+  quinled-affiliatebot:
+    container_name: quinled-affiliatebot
+    build: .
+    env_file: .env
