@@ -1,0 +1,6 @@
+{
+    "AmazonAffiliateLink": "{url}?tag={AMAZON_TAG}",
+    "Affiliate": "Support {community} by using this affiliate link posted by {username}:",
+    "BlockedAffiliate": "This seller does not allow direct affiliate links, sorry:\n{url}",
+    "NoAttachment": "Dear {username},\n\nthanks for your post in #{channel_name}!\n\nI've detected that you didn't attach an image to your post: Please remember that if you would like to get support for a project, an install, or just a general wiring question, it's **extremely** helpful to get a rough drawing of your planned setup!\n\nAlso a kind reminder: Please see the post guidelines! You can find them at the top of the channel by clicking on the icon that looks like a :orange_book: with a :ballot_box_with_check:!\n\nThanks for helping us to help you! :)\n\nSincerely,\n{bot_name}!"
+}

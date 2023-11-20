@@ -1,0 +1,14 @@
+{
+    "aeplus": {
+        "Message": "https://quinled.info/quinled-esp32-ae-touch-ir-microphone-micro-sdcard-3x-led-channel/",
+        "Description": "Link to the QuinLED-ESP32-AE+ info page"            
+    },
+    "digquad": {
+        "Message": "https://quinled.info/2020/03/12/digital-led-power-usage/",
+        "Description": "Link to the QuinLED-Dig-Quad info page"            
+    },
+    "powersheet": {
+        "Message": "https://quinled.info/2020/03/12/digital-led-power-usage/",
+        "Description": "Use this command to figure out how much power your LEDs will consume!"
+    }
+}

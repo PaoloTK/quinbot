@@ -1,73 +1,77 @@
-# bot.py
+# QuinBot.py
+import discord
 import gettext
+import json
+import logging
 import os
 import re
-# from pprint import pprint
-import urllib.parse
+import sys
 
-import discord
 from aliexpress_api import AliexpressApi, models
+from discord import app_commands
 from dotenv import load_dotenv
+from slash_commands import register_commands
 
+# Initialize logging
+logging.basicConfig(level=logging.INFO)
+
+# Load environment variables and initialize settings
 load_dotenv()
 
-try:
-    traduction = gettext.translation('discord_affiliatebot', localedir='locale')
-    traduction.install()
-except FileNotFoundError:
-    traduction = gettext.translation('discord_affiliatebot', localedir='locale', languages=["en"])
-    traduction.install()
-
-DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
 ALI_APP_KEY = os.getenv('ALI_APP_KEY')
 ALI_APP_SECRET = os.getenv('ALI_APP_SECRET')
 AMAZON_TAG = os.getenv('AMAZON_TAG')
 COMMUNITY = os.getenv('COMMUNITY')
+DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
+GUILD_ID = int(os.getenv('GUILD_ID'))
 LED_SETUP_TALK_CHANNEL_ID = int(os.getenv('LED_SETUP_TALK_CHANNEL_ID'))
 
-# ALIEXPRESS_REGEX = "(http[s]?://[a-zA-Z0-9.-]+aliexpress\.com(?:.+?dl_target_url=(.+)|[^\s\n?]+?(?:.html)|[^\s\n?]+))"
 ALIEXPRESS_REGEX = "(http[s]?://[a-zA-Z0-9.-]+aliexpress\.(com|us)(?:.+?dl_target_url=(.+)|[^ \n?]+?(?:\.html)|[^ \n?]+))"
 AMAZON_REGEX = "(http[s]?://[a-zA-Z0-9.-]*(?:amazon|amzn)\.[a-zA-Z]+(?:.+?(?:ref=[^?]+)|.+(?= )|[^?]+))"
 
+# Load objects from JSON
+def load_json(filepath: str) -> dict:
+    with open(filepath, 'r', encoding='utf-8') as file:
+        objects = json.load(file)
+    return objects
+
+aliexpress = AliexpressApi(ALI_APP_KEY, ALI_APP_SECRET, models.Language.EN, models.Currency.EUR, "discord")
+logging.info(aliexpress)
 intents = discord.Intents.default()
 intents.message_content = True
-
 client = discord.Client(intents=intents)
-aliexpress = AliexpressApi(ALI_APP_KEY, ALI_APP_SECRET, models.Language.EN, models.Currency.EUR, "discord")
+bot_name = "Bot" # Replaced at runtime
+tree = app_commands.CommandTree(client)
 
-def getUserNameForMessage(message):
-    userName = message.author.name
-    if hasattr(message.author, "display_name") and message.author.display_name is not None:
-        userName = message.author.display_name
-    if hasattr(message.author, "nick") and message.author.nick is not None:
-        userName = message.author.nick
-
-    return userName
+def get_username_for_message(message):
+    username = message.author.display_name or message.author.name
+    return username
     
+def get_amazon_affiliate_link(url):
+    template = messages.get('AmazonAffiliateLink', "")
+    return template.format(url=url, AMAZON_TAG=AMAZON_TAG)
 
-async def handleNewSetupTalkThread(message):
+async def handle_new_setup_talk_thread(message):
     thread = message.channel
     channel = message.channel.parent
 
     if hasattr(message, "position") and message.position == 0 and hasattr(message, "attachments") and len(message.attachments) == 0:
-        userName = getUserNameForMessage(message)
+        template = messages.get("NoAttachment","")
+        username = get_username_for_message(message)
+        channel_name = channel.name
 
-        await thread.send(content='''Dear {:s},
-
-thanks for your post in #{:s}!
-
-I've detected that you didn't attach an image to your post: Please remember that if you would like to get support for a project, an install or just a general wiring question, it's **extremely** helpful to get a rough drawing of your planned setup!
-
-Also a kind reminder: Please see the post guidelines! You can find them at the top of the channel by clicking on the icon that looks like a :orange_book: with a :ballot_box_with_check:!
-
-Thanks for helping us to help you! :)
-
-Sincerely,
-{:s}!'''.format(userName, message.channel.parent.name, client.user.name), delete_after=300)
+        logging.info('User {} has been informed about best practices in {} channel'.format(username, message.channel.name))
+        await thread.send(content=template.format(username=username, channel_name=channel_name, bot_name=bot_name), delete_after=300)
 
 @client.event
 async def on_ready():
-    print('{} has connected to Discord!'.format(client.user.name))
+    bot_name=client.user.name
+    logging.info('{} has connected to Discord!'.format(bot_name))
+    # Sync bot commands to server
+    if GUILD_ID:
+        commands = load_json('commands.json')
+        await register_commands(tree, commands, GUILD_ID)
+        await tree.sync(guild=discord.Object(GUILD_ID))
 
 @client.event
 async def on_message(message):
@@ -75,59 +79,56 @@ async def on_message(message):
         return
 
     # HANDLING LED SETUP TALK
-    if LED_SETUP_TALK_CHANNEL_ID is not None and hasattr(message, "channel") and isinstance(message.channel, discord.Thread) and hasattr(message.channel, "parent") and isinstance(message.channel.parent, discord.ForumChannel) and message.channel.parent.id == LED_SETUP_TALK_CHANNEL_ID:
-        await handleNewSetupTalkThread(message)
-
-    if message.content == '!affiliate check':
-        await message.channel.send('{} affiliate bot is running !'.format(COMMUNITY))
-        return
+    if LED_SETUP_TALK_CHANNEL_ID: 
+        if hasattr(message, "channel") and isinstance(message.channel, discord.Thread) and hasattr(message.channel, "parent") and isinstance(message.channel.parent, discord.ForumChannel) and message.channel.parent.id == LED_SETUP_TALK_CHANNEL_ID:
+            
+            await handle_new_setup_talk_thread(message)
 
     affiliate_links = []
 
-    if ALI_APP_KEY:
+    if ALI_APP_KEY and ALI_APP_SECRET:
         for match in re.findall(ALIEXPRESS_REGEX, message.content):
             ali_affiliate_links = aliexpress.get_affiliate_links(match[0])
             affiliate_link = ''
             if len(ali_affiliate_links) > 0 and hasattr(ali_affiliate_links[0], 'promotion_link'):
                 affiliate_link = ali_affiliate_links[0].promotion_link
             else:
-                affiliate_link = 'This seller does not allow direct affiliate links, sorry{:s}'.format(': {:s}'.format(ali_affiliate_links[0].source_value) if hasattr(ali_affiliate_links[0], 'source_value') else '!')
+                template = messages.get("BlockedAffiliate","")
+                affiliate_link = template.format(url=format(ali_affiliate_links[0].source_value) if hasattr(ali_affiliate_links[0], 'source_value') else '!')
             affiliate_links.append(affiliate_link)
+        
     if AMAZON_TAG:
         for match in re.findall(AMAZON_REGEX, message.content):
             affiliate_links.append(get_amazon_affiliate_link(match))
 
     if affiliate_links:
-        userName = getUserNameForMessage(message)
+        username = get_username_for_message(message)
 
-        response = traduction.ngettext('Support {} by using this affiliate link posted by {}:',
-                                       'Support {} by using these affiliate links posted by {}:',
-                                       len(affiliate_links)).format(COMMUNITY, userName)
+        template = messages.get("Affiliate","")
+        community = COMMUNITY if COMMUNITY else "this community"
+        response = template.format(community=community, username=username)
         for affiliate_link in affiliate_links:
             response += "\n" + affiliate_link
 
-        if isinstance(message.channel, discord.DMChannel):
-            print(traduction.ngettext('Replaced {} link in DM',
-                                      'Replaced {} links in DM',
-                                      len(affiliate_links))
-                  .format(len(affiliate_links)))
-        else:
-            print(traduction.ngettext('Replaced {} link in {} channel from {} message on {} server',
-                                      'Replaced {} links in {} channel from {} message on {} server',
-                                      len(affiliate_links))
-                  .format(len(affiliate_links), message.channel.name, userName, message.guild.name))
+        logging.info('Replaced {} link(s) in {} channel from {} message'.format(len(affiliate_links), message.channel.name, username))
 
         await message.channel.send(response)
 
-        if message.content.startswith('!affiliate '):
-            await message.delete()
+if __name__ == "__main__":
+    messages = load_json('messages.json')
 
+    if not ALI_APP_KEY or not ALI_APP_SECRET:
+        logging.warning("Aliexpress environment variables haven't been configured, Aliexpress affiliate won't work")
+    if not AMAZON_TAG:
+        logging.warning("Amazon environment variable hasn't been configured, Amazon affiliate won't work")
+    if not LED_SETUP_TALK_CHANNEL_ID:
+        logging.warning("Led Setup Talk environment variable hasn't been configured, the bot won't advise users on best practices")
+    if not GUILD_ID:
+        logging.warning("Guild ID environment variable hasn't been configured, commands won't be synced")
 
-def get_amazon_affiliate_link(url):
-    return url + f'?tag={AMAZON_TAG}'
-
-
-if DISCORD_TOKEN:
-  client.run(DISCORD_TOKEN)
-else:
-  print("Fatal: No DISCORD_TOKEN")
+    if DISCORD_TOKEN:
+        client.run(DISCORD_TOKEN)
+    else:
+        logging.critical("DISCORD_TOKEN environment variable hasn't been configured, exiting")
+        sys.exit(1)
+    
