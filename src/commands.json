@@ -1,14 +1,110 @@
 {
     "aeplus": {
-        "Message": "https://quinled.info/quinled-esp32-ae-touch-ir-microphone-micro-sdcard-3x-led-channel/",
-        "Description": "Link to the QuinLED-ESP32-AE+ info page"            
+        "Description": "Link to the QuinLED-ESP32-AE+ info page",
+        "Message": "https://quinled.info/quinled-esp32-ae-touch-ir-microphone-micro-sdcard-3x-led-channel/"
+    },
+    "analog": {
+        "Description": "Link to analog LEDs page",
+        "Message": "https://quinled.info/analog-led-dimming/"
+    },
+    "an-deca": {
+        "Description": "Link to the QuinLED-An-Deca info page",
+        "Message": "https://quinled.info/quinled-an-deca/"
+    },
+    "an-penta": {
+        "Description": "Link to the QuinLED-An-Penta info page",
+        "Message": "https://quinled.info/quinled-an-penta/"
+    },
+    "an-quad": {
+        "Description": "Link to the QuinLED-An-Quad info page",
+        "Message": "https://quinled.info/quinled-an-quad/"
+    },
+    "awgtomm2": {
+        "Description": "Convert AWG ('American Wire Gauge') to mm2",
+        "Message": "https://www.rapidtables.com/calc/wire/awg-to-mm.html"
+    },
+    "boardbuyingguide": {
+        "Description": "Which QuinLED board is the right one for your project?",
+        "Message": "https://www.youtube.com/watch?v=VYZBkMEqvCY"
+    },
+    "databooster": {
+        "Description": "Link to the QuinLED-Data-Booster info page",
+        "Message": "https://quinled.info/quinled-data-booster/"
+    },
+    "datawire": {
+        "Description": "How long can the data wire for my digital LEDs be?",
+        "Message": "https://quinled.info/2021/03/10/maximum-length-data-wire-leds-ws2812b-sk6812-ws2815/"
+    },
+    "digital": {
+        "Description": "Link to the digital LEDs info page",
+        "Message": "https://quinled.info/addressable-digital-leds/"
+    },
+    "dig2go": {
+        "Description": "Link to the QuinLED-dig2go info page",
+        "Message": "https://quinled.info/quinled2go/"
+    },
+    "diguno": {
+        "Description": "Link to the QuinLED-Dig-Uno info page",
+        "Message": "https://quinled.info/quinled-dig-uno/"
     },
     "digquad": {
-        "Message": "https://quinled.info/2020/03/12/digital-led-power-usage/",
-        "Description": "Link to the QuinLED-Dig-Quad info page"            
+        "Description": "Link to the QuinLED-Dig-Quad info page",
+        "Message": "https://quinled.info/quinled-dig-quad/"
+    },
+    "digocta": {
+        "Description": "Link to the QuinLED-Dig-Octa info page",
+        "Message": "https://quinled.info/quinled-dig-octa/"
+    },
+    "donate": {
+        "Description": "Use this command to give Quidnor some €$£¥ <3 Thank you!",
+        "Message": "https://quinled.info/donations/"
+    },
+    "dropcalc": {
+        "Description": "Calculate the voltage drop for your setup (external / non-QuinLED.info link)",
+        "Message": "https://www.rapidtables.com/calc/wire/voltage-drop-calculator.html"
+    },
+    "esp": {
+        "Description": "Link to the QuinLED-ESP32 info page",
+        "Message": "https://quinled.info/quinled-esp32/"
+    },
+    "install": {
+        "Description": "Link to the QuinLED install page for easy setup of your QuinLED controllers!",
+        "Message": "Webinstaller (Chrome & Edge browsers only): https://install.quinled.info/\nDownload files: https://github.com/filipvdb/QuinLED-Firmware/"
+    },
+    "jonny": {
+        "Description": "Jonny's command",
+        "Message": "https://bit.ly/3LYw17Q"
+    },
+    "maxleds": {
+        "Description": "How many digital LEDs can a QuinLED board control?",
+        "Message": "https://quinled.info/2021/03/23/max-amount-of-addressable-leds/"
+    },
+    "powerinjection": {
+        "Description": "Link to the Power Injection Livestream, explaining in detail what it is and how you do it!",
+        "Message": "https://quinled.info/the-ultimate-led-strip-power-injection-guide/"
     },
     "powersheet": {
-        "Message": "https://quinled.info/2020/03/12/digital-led-power-usage/",
-        "Description": "Use this command to figure out how much power your LEDs will consume!"
+        "Description": "Use this command to figure out how much power your LEDs will consume!",
+        "Message": "https://quinled.info/2020/03/12/digital-led-power-usage/"
+    },
+    "psu": {
+        "Description": "Link to the digital LEDs PSU recommendations page",
+        "Message": "https://quinled.info/2018/10/01/tools-and-equipment/"
+    },
+    "shops": {
+        "Description": "Official QuinLED shops: pre-assembled boards and more can be purchased here!",
+        "Message": "Worldwide: https://shop.allnetchina.cn/collections/quinled\nUS by DrZzs: https://drzzs.com/shop/"
+    },
+    "tools": {
+        "Description": "Link to the tools and equipment info page",
+        "Message": "https://quinled.info/2018/10/01/tools-and-equipment/"
+    },
+    "wires": {
+        "Description": "What's the wire thickness needed for my LED install?",
+        "Message": "https://quinled.info/2018/10/20/wire-thickness-needed/"
+    },
+    "yt": {
+        "Description": "Link to Quindor's YouTube channel: Intermit.Tech",
+        "Message": "https://www.youtube.com/c/IntermitTech"
     }
 }
