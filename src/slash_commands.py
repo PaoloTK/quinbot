@@ -7,12 +7,13 @@ from discord import app_commands
 def create_command_callback(command, default_message):
     async def command_callback(interaction: discord.Interaction):
         username = interaction.user.name
-        message = execute_command_action(command, default_message, username)
+        message = execute_command_action(command, default_message)
         logging.info('{} command has been called by {}'.format(command, username))
         await interaction.response.send_message(message)
     return command_callback
 
-async def register_commands(command_tree, commands, guild_id):
+async def register_commands(client, commands, guild_id):
+    tree = app_commands.CommandTree(client)
     # Create and register a command for each item in the commands dictionary
     for name, details in commands.items():
         command_callback = create_command_callback(name, details["Message"])
@@ -22,9 +23,11 @@ async def register_commands(command_tree, commands, guild_id):
             callback=command_callback
         )
         # Attach the command to a specific guild using guild_id
-        command_tree.add_command(new_command, guild=discord.Object(id=guild_id))
+        tree.add_command(new_command, guild=discord.Object(id=guild_id))
 
-def execute_command_action(command, message, username):
+    await tree.sync(guild=discord.Object(guild_id))
+
+def execute_command_action(command, message):
     if command == "awgtomm2":
         result = awgtomm2(message)
     else:

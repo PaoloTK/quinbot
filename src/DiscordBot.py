@@ -8,7 +8,6 @@ import re
 import sys
 
 from aliexpress_api import AliexpressApi, models
-from discord import app_commands
 from dotenv import load_dotenv
 from slash_commands import register_commands
 
@@ -41,7 +40,6 @@ intents = discord.Intents.default()
 intents.message_content = True
 client = discord.Client(intents=intents)
 bot_name = "Bot" # Replaced at runtime
-tree = app_commands.CommandTree(client)
 
 def get_username_for_message(message):
     username = message.author.display_name or message.author.name
@@ -70,8 +68,7 @@ async def on_ready():
     # Sync bot commands to server
     if GUILD_ID:
         commands = load_json('commands.json')
-        await register_commands(tree, commands, GUILD_ID)
-        await tree.sync(guild=discord.Object(GUILD_ID))
+        await register_commands(client, commands, GUILD_ID)
 
 @client.event
 async def on_message(message):
