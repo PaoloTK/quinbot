@@ -20,7 +20,7 @@
         "message": "https://quinled.info/quinled-an-quad/"
     },
     "awgtomm2": {
-        "description": "Convert AWG ('American Wire Gauge') to mm2",
+        "description": "Convert AWG ('American Wire Gauge') to mm²",
         "message": "{} AWG is equivalent to {} mm²"
     },
     "boardbuyingguide": {
@@ -60,8 +60,8 @@
         "message": "https://quinled.info/donations/"
     },
     "dropcalc": {
-        "description": "Calculate the voltage drop for your setup (external / non-QuinLED.info link)",
-        "message": "https://www.rapidtables.com/calc/wire/voltage-drop-calculator.html"
+        "description": "Calculate the voltage drop for your setup",
+        "message": "A wire of gauge {}, length {}, running at {} volts and {} amps will have a voltage drop of:\n{}% ({} V)"
     },
     "esp": {
         "description": "Link to the QuinLED-ESP32 info page",
